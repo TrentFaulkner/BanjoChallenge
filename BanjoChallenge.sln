@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Currencies", "Currencies\Currencies.csproj", "{99413985-C41E-4416-A1CF-9E6487725803}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLChallenge", "SQLChallenge\SQLChallenge.csproj", "{2617A98D-0F80-4B89-BDBE-8AE87E3D05E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{99413985-C41E-4416-A1CF-9E6487725803}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99413985-C41E-4416-A1CF-9E6487725803}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99413985-C41E-4416-A1CF-9E6487725803}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2617A98D-0F80-4B89-BDBE-8AE87E3D05E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2617A98D-0F80-4B89-BDBE-8AE87E3D05E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2617A98D-0F80-4B89-BDBE-8AE87E3D05E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2617A98D-0F80-4B89-BDBE-8AE87E3D05E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

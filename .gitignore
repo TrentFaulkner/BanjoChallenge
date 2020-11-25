@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Currencies/bin/*
+/Currencies/obj/*
+/SQLChallenge/bin/*
+/SQLChallenge/obj/*
+/.vs/*

@@ -1,0 +1,32 @@
+﻿@page "/"
+@inject IConfiguration Configuration
+@inject ExchangeRatesService ratesService
+@using Data
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<p>APIUrl: @Configuration["ExchangeRatesAPIKey"]</p>
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+@if (rates == null)
+{
+    <p>Loading rates...</p>
+}
+else
+{
+    <p>@rates.Disclaimer</p>
+}
+
+@code
+{
+    private ExchangeRates rates = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        rates = await ratesService.GetLatestRatesAsync();
+    }
+
+}

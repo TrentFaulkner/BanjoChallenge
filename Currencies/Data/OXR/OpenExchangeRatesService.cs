@@ -15,8 +15,17 @@ namespace Currencies.Data.OXR
         private readonly IHttpClientFactory clientFactory;
         private readonly string APIBaseUrl;
         private readonly string APIKey;
-        private readonly string defaultBaseCurrency;
 
+        // Not actually used since USD is the only option for free accounts
+        private readonly string defaultBaseCurrency;    
+
+        /// <summary>
+        /// Initialises the exchange rates service.  Generally called from Startup.cs
+        /// </summary>
+        /// <param name="clientFactory">Factory for handling HTTPClient conections</param>
+        /// <param name="APIBaseUrl">Url to connect to the service, e.g. https://openexchangerates.org/api/ </param>
+        /// <param name="APIKey">32 character key</param>
+        /// <param name="defaultBaseCurrency">3 character currency. Default is USD</param>
         public OpenExchangeRatesService(IHttpClientFactory clientFactory, string APIBaseUrl, string APIKey, string defaultBaseCurrency)
         {
             this.clientFactory = clientFactory;
@@ -25,24 +34,70 @@ namespace Currencies.Data.OXR
             this.defaultBaseCurrency = defaultBaseCurrency;
         }
 
+
+        public async Task<ExchangeRates> GetHistoricalRatesAsync(DateTime selectedDate, string baseCurrency = null, List<string> symbols = null)
+        {
+            // e.g. https://openexchangerates.org/api/historical/2012-07-10.json?app_id=YOUR_APP_ID
+            return await GetRates("historical/" + selectedDate.ToString("yyyy-MM-dd") + ".json", baseCurrency, symbols);
+        }
+
         /// <summary>
         /// Gets an object that holds all currency pairs for the base currency provided.
         /// </summary>
         /// <param name="baseCurrency">the character currency (e.g. AUD).  Note that the base currency can only
         /// be changed for Developer, Enterprise and Unlimited plan clients</param>
         /// <returns>ExchangeRates object serialised from a json response, otherwise null</returns>
-        public async Task<LatestRates> GetLatestRatesAsync(string baseCurrency = null)
+        public async Task<ExchangeRates> GetLatestRatesAsync(string baseCurrency = null, List<string> symbols = null)
+        {
+            // e.g. https://openexchangerates.org/api/latest.json?app_id=YOUR_APP_ID
+            return await GetRates("latest.json", baseCurrency, symbols);
+
+        }
+
+        /// <summary>
+        /// Time series rates require an Enterprise or Unlimited account, therefore this method
+        /// will only return a sample set of data
+        /// </summary>
+        /// <param name="fromDate"></param>
+        /// <param name="toDate"></param>
+        /// <param name="baseCurrency"></param>
+        /// <param name="symbols"></param>
+        /// <returns></returns>
+        public async Task<TimeSeries> GetTimeSeriesRatesAsync(DateTime fromDate, DateTime toDate
+            , string baseCurrency = null, List<string> symbols = null)
+        {
+            /* e.g. https://openexchangerates.org/api/time-series.json
+                    ?app_id=YOUR_APP_ID
+                    &start=2012-01-01
+                    &end=2012-01-31
+                    &base=AUD
+                    &symbols=BTC,EUR,HKD
+                    &prettyprint=1
+            */
+
+            //return await GetRates("time-series.json", baseCurrency, symbols, fromDate, toDate);
+
+            return await Task.FromResult(TimeSeries.createSampleData());
+        }
+
+
+        private async Task<ExchangeRates> GetRates(string JSONPathSegment, string baseCurrency = null
+            , List<string> symbols = null
+            , DateTime? fromDate = null, DateTime? toDate = null )
         {
 
-            string url = APIBaseUrl + "latest.json?app_id=" + APIKey
-                + "&base=" + (baseCurrency != null ? baseCurrency : defaultBaseCurrency)
+            string url = APIBaseUrl + JSONPathSegment + "?app_id=" + APIKey
+                + baseCurrency ?? ("&base=" + baseCurrency)
+                + symbols ?? ("&symbols=" + string.Join(",", symbols))
+                + fromDate ?? ("&start=" + fromDate.Value.ToString("yyyy-MM-dd"))
+                + toDate ?? ("&end=" + toDate.Value.ToString("yyyy-MM-dd"))
             ;
 
             var client = clientFactory.CreateClient();
 
             try
-            { 
-                return await client.GetFromJsonAsync<LatestRates>(url);
+            {
+                return await client.GetFromJsonAsync<ExchangeRates>(url);
             }
             catch (HttpRequestException e)
             {
@@ -58,32 +113,21 @@ namespace Currencies.Data.OXR
             }
 
             return null;
+
         }
 
+        /// <summary>
+        /// Gets all standard currencies and their descriptions
+        /// Doesn't require an APIKey
+        /// </summary>
+        /// <returns></returns>
         public async Task<Dictionary<string, string>> GetCurrenciesAsync()
         {
             string url = APIBaseUrl + "currencies.json";
 
             var client = clientFactory.CreateClient();
 
-            try
-            {
-                return await client.GetFromJsonAsync<Dictionary<string,string>>(url);
-            }
-            catch (HttpRequestException e)
-            {
-                System.Diagnostics.Debug.WriteLine("An error occurred: " + e.Message);
-            }
-            catch (NotSupportedException nse)
-            {
-                System.Diagnostics.Debug.WriteLine("The content type is not supported: " + nse.Message);
-            }
-            catch (JsonException je)
-            {
-                System.Diagnostics.Debug.WriteLine("Invalid JSON: " + je.Message);
-            }
-
-            return null;
+            return await client.GetFromJsonAsync<Dictionary<string,string>>(url);
         }
     }
 }

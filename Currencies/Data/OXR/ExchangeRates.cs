@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Currencies.Data.OXR
 {
-    public class LatestRates
+    public class ExchangeRates
     {
 
         public string Disclaimer { get; set; }

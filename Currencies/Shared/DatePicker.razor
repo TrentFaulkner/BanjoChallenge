@@ -1,0 +1,66 @@
+﻿<select @bind="Day" class="custom-select-sm">
+    @for (int i = 1; i <= 31; i++)
+    {
+        <option>@i</option>
+    }
+</select>
+<select @bind="Month" class="custom-select-sm">
+    @for (int i = 1; i <= 12; i++)
+    {
+        <option value="@i">@Months[i - 1]</option>
+    }
+</select>
+<select @bind="Year" class="custom-select-sm">
+    @for (int i = DateTime.Now.Year - 5; i <= DateTime.Now.Year + 5; i++)
+    {
+        <option>@i</option>
+    }
+</select>
+@if (!HideButton)
+{
+    <button type="button" @onclick="OnSelectClick" class="btn-primary">Select</button>
+}
+
+@code {
+    public int Day { get; set; }
+    public int Month { get; set; }
+    public int Year { get; set; }
+
+    public string[] Months { get; set; } = {
+       "January", "February", "March",
+       "April", "May", "June", "July",
+       "August", "September", "October",
+       "November", "December" };
+
+    [Parameter]
+    public EventCallback<DateTime> DateSelected { get; set; }
+    [Parameter]
+    public bool HideButton { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Day = DateTime.Now.Day;
+        Month = DateTime.Now.Month;
+        Year = DateTime.Now.Year;
+    }
+
+    public Task OnSelectClick()
+    {
+        DateTime dt = DateTime.Now;
+        try
+        {
+            dt = new DateTime(Year, Month, Day);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            // An un-representable DateTime was specified
+            // Will default to today's date
+        }
+
+        return DateSelected.InvokeAsync(dt);
+    }
+}
+
+<!-- Simple DatePicker Blazor Component with modifications from
+    http://www.binaryintellect.net/articles/50c0b21e-79f9-4757-ba30-8a052be42e96.aspx
+-->

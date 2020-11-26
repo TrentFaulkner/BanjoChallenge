@@ -1,21 +1,51 @@
 ﻿@page "/Chart/{currency?}"
+@inject OpenExchangeRatesService ratesService;
+@using Data.OXR
 @using C1.Chart;
 @using C1.Blazor.Chart;
 
-<h3>Chart</h3>
+<h3>Price</h3>
 
 @if (currency == null)
 {
     <p>Please <a href="/">select a currency</a> before viewing the charts</p>
-
 }
 else
 {
-/*    <FlexChart ItemsSource="currencies" Bindings="Code">
-        <SeriesCollection>
-            <Series Binding=""></Series>
-        </SeriesCollection>
-    </FlexChart>*/
+    <p>
+        Select another date
+        <DatePicker DateSelected="OnDateSelected"></DatePicker>
+    </p>
+
+    <p>The price for USD/@currency is: @latestPrice </p>
+
+
+    <h3>Chart</h3>
+    <p>
+        From Date: <DatePicker HideButton="true"></DatePicker><br/>
+        To Date: <DatePicker DateSelected="OnDateRangeSelected"></DatePicker>
+    </p>
+
+    
+    @if (sampleDataNZD != null)
+    {
+        <p>
+            Please note that time series data requires either an Enterprise or Unlimited plan.
+        </p>
+
+        <FlexChart ItemsSource="sampleDataAUD" BindingX="date" Binding="value" ChartType="ChartType.SplineSymbols"
+                   HeaderContent="Sample data for two weeks: USD paired with AUD and NZD">
+            <SeriesCollection>
+                <Series Name="AUD"></Series>
+                <Series Name="NZD" ItemsSource="sampleDataNZD"></Series>
+            </SeriesCollection>
+            <AxisCollection>
+                <Axis AxisType="AxisType.X" Position="Position.Bottom" AxisLine="false" Format="d-MMM-yyyy" MajorTickMarks="TickMark.None"/>
+                <Axis AxisType="AxisType.Y" Position="Position.Left" Title="1 $USD Equivalent" AxisLine="false" MajorTickMarks="TickMark.None" MajorGrid="true" />
+            </AxisCollection>
+        </FlexChart>
+
+    }
 }
 
 @code
@@ -23,8 +53,66 @@ else
     [Parameter]
     public string currency { get; set; }
 
-    protected override void OnInitialized()
+    public decimal latestPrice { get; set; }
+
+
+    public TimeSeries chartData = null;
+    public List<CurrencyPairValue> sampleDataAUD, sampleDataNZD;
+
+    // Dates stored within the date range datepickers
+    public DateTime fromDate, toDate;
+
+    protected override async Task OnInitializedAsync()
     {
-        currency = currency;
+        var latestPrices = await ratesService.GetLatestRatesAsync(symbols: new List<string>() { currency });
+        latestPrice = latestPrices.Rates[currency];
+    }
+
+
+    /// <summary>
+    /// Converts the auto-parsed json containing Dictionaries within Dictionaries
+    /// into a more usable format for charting: a lite of CurrencyPairValues
+    /// </summary>
+    /// <param name="timeSeries"></param>
+    /// <param name="currencyCode"></param>
+    /// <returns></returns>
+    private List<CurrencyPairValue> convertTimeSeriesToValueList(TimeSeries timeSeries, string currencyCode)
+    {
+        List<CurrencyPairValue> list = new List<CurrencyPairValue>();
+        foreach (string date in timeSeries.Rates.Keys)
+        {
+            list.Add(
+                new CurrencyPairValue()
+                {
+                    code = currencyCode
+                    , date = DateTime.Parse(date)
+                    , value = timeSeries.Rates[date][currencyCode]
+                }
+            );
+        }
+
+        return list;
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="date"></param>
+    private async Task OnDateSelected(DateTime date)
+    {
+        var latestPrices = await ratesService.GetHistoricalRatesAsync(date, symbols: new List<string>() { currency });
+        latestPrice = latestPrices.Rates[currency];
+    }
+
+    /// <summary>
+    /// This method will only ever get sample data for AUD and NZD as permitted by a free account
+    /// </summary>
+    /// <param name="toDate"></param>
+    private async void OnDateRangeSelected(DateTime toDate)
+    {
+        chartData = await ratesService.GetTimeSeriesRatesAsync(fromDate, toDate, symbols: new List<string>() { "AUD","NZD" });
+        sampleDataAUD = convertTimeSeriesToValueList(chartData, "AUD");
+        sampleDataNZD = convertTimeSeriesToValueList(chartData, "NZD");
     }
 }

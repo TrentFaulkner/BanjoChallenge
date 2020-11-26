@@ -1,16 +1,11 @@
-using Currencies.Data;
+using Currencies.Data.OXR;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
+
 
 namespace Currencies
 {
@@ -31,7 +26,7 @@ namespace Currencies
             services.AddServerSideBlazor();
             services.AddHttpClient();
             services.AddScoped(s => s.GetRequiredService<IHttpClientFactory>().CreateClient());
-            services.AddScoped(ers => new ExchangeRatesService(
+            services.AddScoped(ers => new OpenExchangeRatesService(
                 ers.GetRequiredService<IHttpClientFactory>()
                 , Configuration.GetSection("ExchangeRatesAPIUrl").Value
                 , Configuration.GetSection("ExchangeRatesAPIKey").Value

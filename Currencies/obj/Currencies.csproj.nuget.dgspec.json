@@ -39,6 +39,12 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
+          "dependencies": {
+            "C1.Blazor.Chart": {
+              "target": "Package",
+              "version": "[3.1.20203.31, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

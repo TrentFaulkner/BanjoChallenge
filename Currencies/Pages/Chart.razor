@@ -1,0 +1,30 @@
+﻿@page "/Chart/{currency?}"
+@using C1.Chart;
+@using C1.Blazor.Chart;
+
+<h3>Chart</h3>
+
+@if (currency == null)
+{
+    <p>Please <a href="/">select a currency</a> before viewing the charts</p>
+
+}
+else
+{
+/*    <FlexChart ItemsSource="currencies" Bindings="Code">
+        <SeriesCollection>
+            <Series Binding=""></Series>
+        </SeriesCollection>
+    </FlexChart>*/
+}
+
+@code
+{
+    [Parameter]
+    public string currency { get; set; }
+
+    protected override void OnInitialized()
+    {
+        currency = currency;
+    }
+}

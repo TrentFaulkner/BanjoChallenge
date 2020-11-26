@@ -1,30 +1,53 @@
 ﻿@page "/"
-@inject IConfiguration Configuration
-@inject ExchangeRatesService ratesService
-@using Data
+@inject OpenExchangeRatesService ratesService
+@using Data.OXR
 
-<h1>Hello, world!</h1>
+<h1>Search by Currency</h1>
 
-Welcome to your new app.
-
-<p>APIUrl: @Configuration["ExchangeRatesAPIKey"]</p>
-
-@if (rates == null)
+@if (allCurrencies == null)
 {
     <p>Loading rates...</p>
 }
 else
 {
-    <p>@rates.Disclaimer</p>
+    <span>Currency Code:</span><input @bind="currencySearch" type="text" list="currencies" size="3" />
+    <datalist id="currencies">
+        @foreach (var currency in allCurrencies)
+        {
+            <option>@currency.Key</option>
+        }
+    </datalist>
+    <button @onclick="e => DoSearch()" class="btn btn-primary" >search</button>
+
+    if (searchResults != null)
+    {
+        @foreach (var currency in searchResults)
+        {
+            <div><a href="Chart/@currency.Key">@currency.Key - @currency.Value</a></div>
+        }
+    }
 }
 
 @code
 {
-    private ExchangeRates rates = null;
+    // Holds currencyCode, description pairs for all currencies
+    private Dictionary<string, string> allCurrencies = null;
+    List<KeyValuePair<string, string>> searchResults;
+
+    private string currencySearch;
+
 
     protected override async Task OnInitializedAsync()
     {
-        rates = await ratesService.GetLatestRatesAsync();
+        allCurrencies = await ratesService.GetCurrenciesAsync();
+    }
+
+    private void DoSearch()
+    {
+        // Empty / null search strings are ok, search for all currencies
+        currencySearch = currencySearch ?? "";
+
+        searchResults = allCurrencies.Where(c => c.Key.Contains(currencySearch)).ToList();
     }
 
 }

@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Currencies.Data
+namespace Currencies.Data.OXR
 {
-    public class ExchangeRates
+    public class LatestRates
     {
 
-        /// <summary>
-        /// 
-        /// </summary>
         public string Disclaimer { get; set; }
 
         public string License { get; set; }

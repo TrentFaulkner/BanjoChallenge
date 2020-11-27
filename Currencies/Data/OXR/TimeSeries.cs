@@ -14,28 +14,34 @@ namespace Currencies.Data.OXR
 
         public int Timestamp { get; set; }
 
+        /// <summary>
+        /// Base currency, always USD for free accounts
+        /// </summary>
         public string Base { get; set; }
 
-        /* For the Time Series, Rates are stored as follows:
-        "2013-01-01": {
-            "BTC": 0.0778595876,
-            "EUR": 0.785518,
-            "HKD": 8.04136
-        }
-        So the base Rates variable is hidden
-        */
-        public Dictionary<string, Dictionary<string, decimal>> Rates { get; set; }
 
         /// <summary>
-        /// No argument constructor that will ente
+        /// For the Time Series, Rates are stored as follows:
+        /// "2013-01-01": {
+        /// "BTC": 0.0778595876,
+        /// "EUR": 0.785518,
+        /// "HKD": 8.04136
+        ///} 
         /// </summary>
-        public static TimeSeries createSampleData()
+        public Dictionary<string, Dictionary<string, decimal>> Rates { get; set; }
+
+
+        /// <summary>
+        /// Creates (real) sample data for USD/AUD and USD/NZD over a period
+        /// of 2 weeks in November 2020
+        /// </summary>
+        /// <returns></returns>
+        public static TimeSeries CreateSampleData()
         {
             TimeSeries series = new TimeSeries();
             series.Disclaimer = "Only for Banjo testing purposes.";
             series.Base = "USD";
 
-            // Real data for 2 weeks mapping USD -> AUD and NZD
             series.Rates = new Dictionary<string, Dictionary<string, decimal>>
             {
                 { "2020-11-12", new Dictionary<string, decimal> { { "AUD", 1.3826m }, { "NZD", 1.4616m } } },
@@ -54,5 +60,30 @@ namespace Currencies.Data.OXR
 
             return series;
         }
+
+        /// <summary>
+        /// Converts the auto-parsed json containing Dictionaries within Dictionaries
+        /// into a more usable format for charting: a list of CurrencyPairValues
+        /// </summary>
+        /// <param name="currencyCode">The single currency to extract from the data</param>
+        /// <returns></returns>
+        public List<CurrencyPairValue> AsValueList(string currencyCode)
+        {
+            List<CurrencyPairValue> list = new List<CurrencyPairValue>();
+            foreach (string date in Rates.Keys)
+            {
+                list.Add(
+                    new CurrencyPairValue()
+                    {
+                        code = currencyCode
+                        , date = DateTime.Parse(date)
+                        , value = Rates[date][currencyCode]
+                    }
+                );
+            }
+
+            return list;
+        }
+
     }
 }

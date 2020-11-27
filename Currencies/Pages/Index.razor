@@ -32,7 +32,7 @@ else
 {
     // Holds currencyCode, description pairs for all currencies
     private Dictionary<string, string> allCurrencies = null;
-    List<KeyValuePair<string, string>> searchResults;
+    private Dictionary<string, string> searchResults;
 
     private string currencySearch;
 
@@ -47,7 +47,7 @@ else
         // Empty / null search strings are ok, search for all currencies
         currencySearch = currencySearch ?? "";
 
-        searchResults = allCurrencies.Where(c => c.Key.Contains(currencySearch)).ToList();
+        searchResults = allCurrencies.Where(c => c.Key.Contains(currencySearch)).ToDictionary(pair => pair.Key, pair => pair.Value);
     }
 
 }

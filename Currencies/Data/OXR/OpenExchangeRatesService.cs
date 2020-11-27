@@ -35,6 +35,14 @@ namespace Currencies.Data.OXR
         }
 
 
+        /// <summary>
+        /// Gets an object that holds all currency pairs for a single date selected
+        /// </summary>
+        /// <param name="selectedDate">date of the value required.  Will defeault to today if it's greate than today</param>
+        /// <param name="baseCurrency"></param>
+        /// <param name="symbols"></param>
+        /// <returns>ExchangeRate object if the data can be found, otherwise null.
+        /// Will also return null if a weekend or holiday date is selected</returns>
         public async Task<ExchangeRates> GetHistoricalRatesAsync(DateTime selectedDate, string baseCurrency = null, List<string> symbols = null)
         {
             // e.g. https://openexchangerates.org/api/historical/2012-07-10.json?app_id=YOUR_APP_ID
@@ -46,6 +54,7 @@ namespace Currencies.Data.OXR
         /// </summary>
         /// <param name="baseCurrency">the character currency (e.g. AUD).  Note that the base currency can only
         /// be changed for Developer, Enterprise and Unlimited plan clients</param>
+        /// <param name="symbols">a List of 3 character currency symbols</param>
         /// <returns>ExchangeRates object serialised from a json response, otherwise null</returns>
         public async Task<ExchangeRates> GetLatestRatesAsync(string baseCurrency = null, List<string> symbols = null)
         {
@@ -55,14 +64,15 @@ namespace Currencies.Data.OXR
         }
 
         /// <summary>
-        /// Time series rates require an Enterprise or Unlimited account, therefore this method
+        /// A range of dates and their values are represented as a TimeSeries object.
+        /// TimeSeries rates require an Enterprise or Unlimited account, therefore this method
         /// will only return a sample set of data
         /// </summary>
-        /// <param name="fromDate"></param>
-        /// <param name="toDate"></param>
-        /// <param name="baseCurrency"></param>
-        /// <param name="symbols"></param>
-        /// <returns></returns>
+        /// <param name="fromDate">if the date is on a weekend, then the next Monday will be automatically chosen</param>
+        /// <param name="toDate">if the date is greater than today, then today will be automatically chosen</param>
+        /// <param name="baseCurrency">Base currency for all pairs selected in symbols</param>
+        /// <param name="symbols">a List of 3 character currency symbols</param>
+        /// <returns>a TimeSeries object that contains all values for all dates and currency pairs</returns>
         public async Task<TimeSeries> GetTimeSeriesRatesAsync(DateTime fromDate, DateTime toDate
             , string baseCurrency = null, List<string> symbols = null)
         {
@@ -77,10 +87,14 @@ namespace Currencies.Data.OXR
 
             //return await GetRates("time-series.json", baseCurrency, symbols, fromDate, toDate);
 
-            return await Task.FromResult(TimeSeries.createSampleData());
+            return await Task.FromResult(TimeSeries.CreateSampleData());
         }
 
 
+        /// <summary>
+        /// Base helper function to handle getting exchange rates
+        /// </summary>
+        /// <param name="JSONPathSegment">the finaly path of the url before parameters, e.g. "latest.json"</param>
         private async Task<ExchangeRates> GetRates(string JSONPathSegment, string baseCurrency = null
             , List<string> symbols = null
             , DateTime? fromDate = null, DateTime? toDate = null )

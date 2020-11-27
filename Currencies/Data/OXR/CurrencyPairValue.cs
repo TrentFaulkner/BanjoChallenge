@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 namespace Currencies.Data.OXR
 {
     /// <summary>
-    /// Helper class for charting exchange rate data
+    /// Helper class for charting exchange rate data.
+    /// Hold data for a single currency pair on a single day
     /// </summary>
     public class CurrencyPairValue
     {

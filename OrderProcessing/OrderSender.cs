@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace OrderProcessing
 {
@@ -18,29 +19,32 @@ namespace OrderProcessing
             this.incompleteOrders = incompleteOrders;
         }
 
-        public void Start()
+        public async Task Start()
         {
-            Console.WriteLine("Starting orders");
-
-            // Assuming that there is a 1 second delay before the first order is sent.
-
-            int ordersToSend = 5;
-            while(ordersToSend > 0)
+            await Task.Run(() =>
             {
-                Thread.Sleep(1000);
-                SendNewOrder();
-                ordersToSend--;
-            }
+                Console.WriteLine("Starting orders");
 
-            ordersToSend = 10;
-            while (ordersToSend > 0)
-            {
-                Thread.Sleep(1000);
-                SendNewOrder();
-                SendNewOrder();
-                ordersToSend -= 2;
-            }
+                // Assuming that there is a 1 second delay before the first order is sent.
 
+                int ordersToSend = 5;
+                while (ordersToSend > 0)
+                {
+                    Thread.Sleep(1000);
+                    SendNewOrder();
+                    ordersToSend--;
+                }
+
+                ordersToSend = 10;
+                while (ordersToSend > 0)
+                {
+                    Thread.Sleep(1000);
+                    SendNewOrder();
+                    SendNewOrder();
+                    ordersToSend -= 2;
+                }
+
+            });
         }
 
         private void SendNewOrder()

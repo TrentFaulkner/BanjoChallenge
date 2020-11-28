@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace OrderProcessing
 {
@@ -14,19 +14,24 @@ namespace OrderProcessing
         {
             CollectUserInput();
 
-            PaymentService paymentService = new PaymentService(incompleteOrders, numPaymentProcessors);
+            // PaymentService will call "Set()" on this event once all orders are processed
+            ManualResetEvent allOrdersProcessedEvent = new ManualResetEvent(false);
+
+            PaymentService paymentService = new PaymentService(incompleteOrders, numPaymentProcessors, allOrdersProcessedEvent);
 
             OrderSender sender = new OrderSender(incompleteOrders);
-            sender.Start();
+            sender.Start().Wait();
 
-            while (incompleteOrders.Count > 0)
-            {
 
-            }
+            // Wait here until our payment service has completed all of its jobs
+            allOrdersProcessedEvent.WaitOne();
 
             Console.WriteLine("Payment Attempts: {0}", paymentService.paymentsAttempted);
             Console.WriteLine("Payments Processed: {0}", paymentService.paymentsProcessed);
+
         }
+
+
 
 
 

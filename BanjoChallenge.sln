@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLChallenge", "SQLChallenge\SQLChallenge.csproj", "{2617A98D-0F80-4B89-BDBE-8AE87E3D05E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Currencies", "Currencies\Currencies.csproj", "{BED0FBD5-50A1-4298-AF0B-21362C9B2CDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Currencies", "Currencies\Currencies.csproj", "{BED0FBD5-50A1-4298-AF0B-21362C9B2CDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderProcessing", "OrderProcessing\OrderProcessing.csproj", "{872CFB89-1442-4352-995F-328E74169634}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{BED0FBD5-50A1-4298-AF0B-21362C9B2CDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BED0FBD5-50A1-4298-AF0B-21362C9B2CDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BED0FBD5-50A1-4298-AF0B-21362C9B2CDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{872CFB89-1442-4352-995F-328E74169634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{872CFB89-1442-4352-995F-328E74169634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{872CFB89-1442-4352-995F-328E74169634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{872CFB89-1442-4352-995F-328E74169634}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,13 @@
+M:\vs\Repos\BanjoChallenge\OrderProcessing\bin\Debug\netcoreapp3.1\OrderProcessing.exe
+M:\vs\Repos\BanjoChallenge\OrderProcessing\bin\Debug\netcoreapp3.1\OrderProcessing.deps.json
+M:\vs\Repos\BanjoChallenge\OrderProcessing\bin\Debug\netcoreapp3.1\OrderProcessing.runtimeconfig.json
+M:\vs\Repos\BanjoChallenge\OrderProcessing\bin\Debug\netcoreapp3.1\OrderProcessing.runtimeconfig.dev.json
+M:\vs\Repos\BanjoChallenge\OrderProcessing\bin\Debug\netcoreapp3.1\OrderProcessing.dll
+M:\vs\Repos\BanjoChallenge\OrderProcessing\bin\Debug\netcoreapp3.1\OrderProcessing.pdb
+M:\vs\Repos\BanjoChallenge\OrderProcessing\obj\Debug\netcoreapp3.1\OrderProcessing.csprojAssemblyReference.cache
+M:\vs\Repos\BanjoChallenge\OrderProcessing\obj\Debug\netcoreapp3.1\OrderProcessing.AssemblyInfoInputs.cache
+M:\vs\Repos\BanjoChallenge\OrderProcessing\obj\Debug\netcoreapp3.1\OrderProcessing.AssemblyInfo.cs
+M:\vs\Repos\BanjoChallenge\OrderProcessing\obj\Debug\netcoreapp3.1\OrderProcessing.csproj.CoreCompileInputs.cache
+M:\vs\Repos\BanjoChallenge\OrderProcessing\obj\Debug\netcoreapp3.1\OrderProcessing.dll
+M:\vs\Repos\BanjoChallenge\OrderProcessing\obj\Debug\netcoreapp3.1\OrderProcessing.pdb
+M:\vs\Repos\BanjoChallenge\OrderProcessing\obj\Debug\netcoreapp3.1\OrderProcessing.genruntimeconfig.cache

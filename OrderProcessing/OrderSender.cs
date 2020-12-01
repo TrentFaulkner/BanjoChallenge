@@ -9,20 +9,20 @@ namespace OrderProcessing
 {
     class OrderSender
     {
-        ObservableCollection<int> incompleteOrders;
+        static SortedSet<Order> incompleteOrders;
         
         private int nextOrderNumber = 1;
 
 
-        public OrderSender(ObservableCollection<int> incompleteOrders)
+        public OrderSender(SortedSet<Order> incompleteOrders)
         {
-            this.incompleteOrders = incompleteOrders;
+            OrderSender.incompleteOrders = incompleteOrders;
         }
 
-        public async Task Start()
+        public void Start()
         {
-            await Task.Run(() =>
-            {
+            //await Task.Run(() =>
+            //{
                 Console.WriteLine("Starting orders");
 
                 // Assuming that there is a 1 second delay before the first order is sent.
@@ -30,7 +30,7 @@ namespace OrderProcessing
                 int ordersToSend = 5;
                 while (ordersToSend > 0)
                 {
-                    Thread.Sleep(1000);
+                    Task.Delay(1000).Wait();
                     SendNewOrder();
                     ordersToSend--;
                 }
@@ -38,20 +38,23 @@ namespace OrderProcessing
                 ordersToSend = 10;
                 while (ordersToSend > 0)
                 {
-                    Thread.Sleep(1000);
+                    Task.Delay(1000).Wait();
                     SendNewOrder();
                     SendNewOrder();
                     ordersToSend -= 2;
                 }
 
-            });
+            //});
         }
 
+        /// <summary>
+        /// Adds an Order to the list, and outputs that it was sent
+        /// </summary>
         private void SendNewOrder()
         {
-            incompleteOrders.Add(nextOrderNumber);
-            Console.WriteLine(string.Format("Order Sender : {0} : Order #{1} Sent", DateTime.Now.ToString("hh:mm:ss tt"), nextOrderNumber));
-            nextOrderNumber++;
+            Order newOrder = new Order(nextOrderNumber++);
+            incompleteOrders.Add(newOrder);
+            Console.WriteLine(string.Format("Order Sender : {0} : Order #{1} Sent", DateTime.Now.ToString("hh:mm:ss tt"), newOrder.id));
         }
     }
 }

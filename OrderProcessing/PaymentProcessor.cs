@@ -10,6 +10,7 @@ namespace OrderProcessing
     class PaymentProcessor : INotifyPropertyChanged
     {
 
+        // Whether this particular processor can handle incoming orders
         private bool _isAvailable;
         public bool isAvailable {
             get { return _isAvailable; }
@@ -42,7 +43,7 @@ namespace OrderProcessing
 
 
                     // Obligatory 2 second processing time
-                    Thread.Sleep(processSpeedInMilliseconds);
+                    Task.Delay(processSpeedInMilliseconds).Wait();
 
                     // Show a 'Failed' message if the processor was forced to fail
                     Console.WriteLine("Payment processor #{0} : {1} : Order #{2} Payment {3}.", processorId

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,7 +8,6 @@ namespace OrderProcessing
 {
     class Program
     {
-        static ObservableCollection<int> incompleteOrders = new ObservableCollection<int>();
         static int numPaymentProcessors = 0, numDeliveryProcessors = 0;
 
         static void Main(string[] args)
@@ -17,16 +17,22 @@ namespace OrderProcessing
             // PaymentService will call "Set()" on this event once all orders are processed
             ManualResetEvent allOrdersProcessedEvent = new ManualResetEvent(false);
 
+            SortedSet<Order> incompleteOrders = new SortedSet<Order>();
             PaymentService paymentService = new PaymentService(incompleteOrders, numPaymentProcessors, allOrdersProcessedEvent);
 
+            DeliveryService deliveryService = new DeliveryService(incompleteOrders, numDeliveryProcessors, allOrdersProcessedEvent);
+
             OrderSender sender = new OrderSender(incompleteOrders);
-            sender.Start().Wait();
+            sender.Start();
 
 
-            // Wait here until our payment service has completed all of its jobs
+            // Forces the main thread to block again, since Set() will likely have already been called
+            // before we reach this point
+            allOrdersProcessedEvent.Reset();
+
+            // Wait here until our payment service has completed all of its jobs (after Set() is called)
             allOrdersProcessedEvent.WaitOne();
 
-            Console.WriteLine("Payment Attempts: {0}", paymentService.paymentsAttempted);
             Console.WriteLine("Payments Processed: {0}", paymentService.paymentsProcessed);
 
         }

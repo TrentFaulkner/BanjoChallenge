@@ -14,12 +14,7 @@ namespace OrderProcessing
         // Collection of Orders that fires events when any item changes.
         static SortedSet<Order> incompleteOrders;
 
-        // A list to hold failed orders while they wait to be re-added to the incomplete list.
-        static List<Order> failedOrdersToProcess = new List<Order>();
-
-        // A list that holds all orders that are currently being processed.
-        static List<Order> inProcessOrders = new List<Order>();
-        
+       
         // Number of processors that need to be created to do the work.
         int numPaymentProcessors = 0;
         List<PaymentProcessor> paymentProcessors = new List<PaymentProcessor>();
@@ -98,25 +93,16 @@ namespace OrderProcessing
                     }
                     else
                     {
-                        // else, if the payment was unsuccessful, we add the order to the failed list
-                        // while it waits to be added back onto the incomplete orders list after the 5 second timeout
-                        // This is so that the thread knows not to close down when there's still failed orders to process.
+                        // else, if the payment was unsuccessful, wait the 5 seconds
+                        // before reverting the Status back to 'Sent', effectively making it
+                        // available for processing again.
                         currentOrder.retryCount++;
-                        //failedOrdersToProcess.Add(currentOrder);
                         Task.Delay(processFailTimeoutInMilliseconds).Wait();
                         currentOrder.currentStatus = Order.Status.Sent;
-                        //failedOrdersToProcess.Remove(currentOrder);
-
-                        incompleteOrders.Add(currentOrder);
-                    }
-
-                    // Finally, if we're done with everything and all queues are empty
-                    // Clear the main thread to continue on
-                    if (incompleteOrders.Count == 0
-                        && failedOrdersToProcess.Count == 0
-                        && inProcessOrders.Count == 0)
-                    {
-                        finishedEvent.Set();
+                        
+                        
+                        // Console.WriteLine("Payment processor #{0} : {1} : Order #{2} Re-Added.", availableProcessor.processorId
+                        //    , DateTime.Now.ToString("hh:mm:ss tt"), currentOrder.id);
                     }
                 }
                 else
@@ -144,9 +130,9 @@ namespace OrderProcessing
                 // checkOrdersTimer.Start();
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove
-                && incompleteOrders.Count == 0
-                && failedOrdersToProcess.Count == 0
-                && inProcessOrders.Count == 0)
+                && incompleteOrders.Count == 0)
+                // && failedOrdersToProcess.Count == 0
+                // && inProcessOrders.Count == 0)
             {
                 // If we have removed the last order from the list
                 // AND our failed and waiting List is empty

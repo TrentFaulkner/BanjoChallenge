@@ -69,7 +69,10 @@ namespace OrderProcessing
                     availableProcessor.isAvailable = true;
 
                     // Delivery will always succeed, so remove the order from the queue.
-                    incompleteOrders.Remove(currentOrder);
+                    lock (incompleteOrders)
+                    {
+                        incompleteOrders.Remove(currentOrder);
+                    }
 
                     // Finally if we have no orders left to process
                     // set the finish event to release the main thread

@@ -17,7 +17,10 @@ namespace OrderProcessing
             // PaymentService will call "Set()" on this event once all orders are processed
             ManualResetEvent allOrdersProcessedEvent = new ManualResetEvent(false);
 
+            // List to hold all orders.  An order is only removed from this list once
+            // it has had its Status set to delivered.
             SortedSet<Order> incompleteOrders = new SortedSet<Order>();
+
             PaymentService paymentService = new PaymentService(incompleteOrders, numPaymentProcessors, allOrdersProcessedEvent);
 
             DeliveryService deliveryService = new DeliveryService(incompleteOrders, numDeliveryProcessors, allOrdersProcessedEvent);
@@ -30,7 +33,7 @@ namespace OrderProcessing
             // before we reach this point
             allOrdersProcessedEvent.Reset();
 
-            // Wait here until our payment service has completed all of its jobs (after Set() is called)
+            // Wait here until our delivery service has completed all of its jobs (after Set() is called)
             allOrdersProcessedEvent.WaitOne();
 
             Console.WriteLine("Payments Processed: {0}", paymentService.paymentsProcessed);

@@ -21,30 +21,29 @@ namespace OrderProcessing
 
         public void Start()
         {
-            //await Task.Run(() =>
-            //{
-                Console.WriteLine("Starting orders");
+            Console.WriteLine("Starting orders");
 
+            int currentSpeed = 1;
+
+            while (currentSpeed <= 10)
+            { 
                 // Assuming that there is a 1 second delay before the first order is sent.
 
-                int ordersToSend = 5;
+                int ordersToSend = 5 * currentSpeed;
                 while (ordersToSend > 0)
                 {
                     Task.Delay(1000).Wait();
-                    SendNewOrder();
-                    ordersToSend--;
+                    lock (incompleteOrders)
+                    {
+                        for (int j = 0; j < currentSpeed; j++)
+                        {
+                            SendNewOrder();
+                            ordersToSend--;
+                        }
+                    }
                 }
-
-                ordersToSend = 10;
-                while (ordersToSend > 0)
-                {
-                    Task.Delay(1000).Wait();
-                    SendNewOrder();
-                    SendNewOrder();
-                    ordersToSend -= 2;
-                }
-
-            //});
+                currentSpeed++;
+            }
         }
 
         /// <summary>
